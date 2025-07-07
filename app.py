@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
-import pickle
+import joblib
 import pandas as pd
 
 app = Flask(__name__)
 
 # Load trained model
-model = pickle.load(open('podcast.sav', 'rb'))
+model = joblib.load(open('model_pipeline.joblib', 'rb'))
 
 @app.route('/')
 def home():
