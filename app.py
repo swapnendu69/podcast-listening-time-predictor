@@ -3,15 +3,16 @@ import pickle
 import pandas as pd
 
 app = Flask(__name__)
-# Load the trained model
+
+# Load trained model
 model = pickle.load(open('podcast.sav', 'rb'))
 
 @app.route('/')
 def home():
     result = ''
-    return render_template('index.html', **locals())
+    return render_template('index.html', result=result)
 
-@app.route('/predict', methods=['POST', 'GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
     Podcast_Name = str(request.form['Podcast_Name'])
     Episode_Length_minutes = float(request.form['Episode_Length_minutes'])
@@ -23,22 +24,22 @@ def predict():
     Number_of_Ads = int(request.form['Number_of_Ads'])
     Episode_Sentiment = str(request.form['Episode_Sentiment'])
 
-    # Create a DataFrame
-    input_data = pd.DataFrame([[Podcast_Name, Episode_Length_minutes, Genre, Host_Popularity_percentage, 
-                                Publication_Day, Publication_Time, Guest_Popularity_percentage, 
-                                Number_of_Ads, Episode_Sentiment]],
-                              columns=['Podcast_Name', 'Episode_Length_minutes', 'Genre', 
-                                       'Host_Popularity_percentage', 'Publication_Day', 
-                                       'Publication_Time', 'Guest_Popularity_percentage', 
-                                       'Number_of_Ads', 'Episode_Sentiment'])
+    # Create DataFrame for prediction
+    input_data = pd.DataFrame([[
+        Podcast_Name, Episode_Length_minutes, Genre, Host_Popularity_percentage,
+        Publication_Day, Publication_Time, Guest_Popularity_percentage,
+        Number_of_Ads, Episode_Sentiment
+    ]], columns=[
+        'Podcast_Name', 'Episode_Length_minutes', 'Genre',
+        'Host_Popularity_percentage', 'Publication_Day',
+        'Publication_Time', 'Guest_Popularity_percentage',
+        'Number_of_Ads', 'Episode_Sentiment'
+    ])
 
-    # Ensure categorical variables are properly encoded (if necessary)
-    # Example: If you used label encoding, apply the same encoding here
-
-    # Make prediction
+    # Predict
     result = model.predict(input_data)[0]
 
-    return render_template('index.html', **locals())
+    return render_template('index.html', result=result)
 
 if __name__ == '__main__':
     from waitress import serve
