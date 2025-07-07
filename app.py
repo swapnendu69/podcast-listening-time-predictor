@@ -4,8 +4,8 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Load trained model
-model = joblib.load(open('model_pipeline.joblib', 'rb'))
+# Load trained model pipeline
+model = joblib.load('model_pipeline.joblib')
 
 @app.route('/')
 def home():
